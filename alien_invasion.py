@@ -75,7 +75,7 @@ class AlienInvasion:
 
         # Get rid of bullets that have disappeared.
         for bullet in self.bullets.copy():
-            if bullet.rect.bottom <= 0:
+            if bullet.rect.right >= self.settings.screen_width:
                 self.bullets.remove(bullet)
 
     def _update_screen(self):
