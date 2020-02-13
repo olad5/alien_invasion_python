@@ -4,6 +4,7 @@ from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from random import randint
 
 
 class AlienInvasion:
@@ -102,10 +103,11 @@ class AlienInvasion:
 
     def __create_alien(self, alien_number, row_number):
         """ Create aan alien and place it in the row. """
+        random_number = randint(-10, 10)
         alien = Alien(self)
         # alien_width = alien.rect.width
         alien_width, alien_height = alien.rect.size
-        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.x = alien_width + 2 * alien_width * random_number
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
