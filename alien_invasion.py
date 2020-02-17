@@ -32,6 +32,7 @@ class AlienInvasion:
             self._update_bullets()
             self._update_aliens()
             self._update_screen()
+            # self._create_fleet()
 
     def _check_events(self):
         """ Respond to keypresses and mouse events. """
@@ -83,14 +84,10 @@ class AlienInvasion:
         Check if the fleet is at an edge, 
         then update the positions of all aliens in the fleet.
          """
-        self._check_fleet_edges()
+        # self._check_fleet_edges()
         self.aliens.update()
-        self._delete_alien()
-
-        for alien in self.aliens.copy():
-            if alien.rect.top >= self.settings.screen_height:
-                self.aliens.remove(alien)
-                print(len(self.aliens))
+        self._delete_aliens()
+        self._new_aliens()
 
         # for row_number in range(number_rows):
         #     # Create the first row of aliens.
@@ -137,13 +134,20 @@ class AlienInvasion:
                 self._change_fleet_direction()
                 break
 
-    def _delete_alien(self):
+    def _delete_aliens(self):
         """ Delete aliens off the screen and add new fleet. """
-        # self.__create_alien()
-        # self._create_fleet()
-        # number_row = self._create_fleet.number_rows
-        # list_number_row = list(range(number_row))
-        # print(list_number_row)
+        for alien in self.aliens.copy():
+            if alien.rect.top >= self.settings.screen_height:
+                self.aliens.remove(alien)
+                print(len(self.aliens))
+
+    def _new_aliens(self):
+        """
+        This creates new set of aliens after the previous ones have
+        disappeared from the screen 
+         """
+        if len(self.aliens) == 0:
+            self._create_fleet()
 
     def _change_fleet_direction(self):
         """ Drop the entire fleet and change the fleet's direction. """
