@@ -85,6 +85,17 @@ class AlienInvasion:
          """
         self._check_fleet_edges()
         self.aliens.update()
+        self._delete_alien()
+
+        for alien in self.aliens.copy():
+            if alien.rect.top >= self.settings.screen_height:
+                self.aliens.remove(alien)
+                print(len(self.aliens))
+
+        # for row_number in range(number_rows):
+        #     # Create the first row of aliens.
+        #     for alien_number in range(number_aliens_x):
+        #         self.__create_alien(alien_number, row_number)
 
     def _create_fleet(self):
         """ Create the fleet of aliens. """
@@ -125,6 +136,14 @@ class AlienInvasion:
             if alien.check_edges():
                 self._change_fleet_direction()
                 break
+
+    def _delete_alien(self):
+        """ Delete aliens off the screen and add new fleet. """
+        # self.__create_alien()
+        # self._create_fleet()
+        # number_row = self._create_fleet.number_rows
+        # list_number_row = list(range(number_row))
+        # print(list_number_row)
 
     def _change_fleet_direction(self):
         """ Drop the entire fleet and change the fleet's direction. """
