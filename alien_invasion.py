@@ -82,26 +82,34 @@ class AlienInvasion:
             if bullet.rect.right >= self.settings.screen_width:
                 self.bullets.remove(bullet)
 
+    def _create_fleet(self):
+        """ Create the fleet of aliens. """
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        available_space_y = self.settings.screen_height - alien_height
+        number_aliens_y = available_space_y // (2 * alien_height)
+        # print(number_aliens_y)
+
+        # Determine the number of rows of aliens that fit on the screen.
+        ship_width = self.ship.rect.width
+        # available_space_x = self.settings.screen_width - (3 * alien_width) - ship_width
+        available_space_x = self.settings.screen_width - (3 * alien_width) - ship_width
+        youth = self.settings.screen_width - available_space_x
+        number_rows = available_space_x // (2 * alien_width)
+        # print(number_rows)
+        for row_number in range(number_rows):
+            for alien_number in range(number_aliens_y):
+                self.__create_alien(alien_number, row_number)
+
     def __create_alien(self, alien_number, row_number):
         """ Create aan alien and place it in the row. """
         alien = Alien(self)
-        # alien_width, alien_height = alien.rect.size
-        # alien.x = alien_width + 2 * alien_width * alien_number
-        # alien.rect.x = alien.x
-        # alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
-        # self.aliens.add(alien)
         alien_width, alien_height = alien.rect.size
-        alien.x = alien_width + 2 * alien_width * alien_number
-        alien.rect.x = alien.x
-        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+        alien.y = alien_height + 2 * alien_height * alien_number
+        alien.rect.y = alien.y
         self.aliens.add(alien)
-
-    def _create_fleet(self):
-        """ Create the fleet of aliens. """
-        # Make an alien.
-        alien = Alien(self)
-        print(alien.rect)
-        self.aliens.add(alien)
+        # alien.rect.x = alien.rect.width + 2 * alien.rect.width * row_number
+        alien.rect.x = self.settings.screen_width - 2 * alien.rect.width * row_number
 
     def _update_screen(self):
         """ Update images on the screen, amd flip to new screen """
