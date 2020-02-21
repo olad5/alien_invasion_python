@@ -39,7 +39,8 @@ class AlienInvasion:
             if self.stats.game_active:
                 self.ship.update()
                 self._update_bullets()
-                self._update_aliens()
+                # self._update_aliens()
+                self._update_box()
 
             self._update_screen()
 
@@ -115,12 +116,23 @@ class AlienInvasion:
             # Look for aliens hitting the bottom of the screen.
         self._check_aliens_left()
 
+    def _update_box(self):
+        """ Update the position of the box. """
+        self._check_rect_edges()
+        self.rectangle.update()
+
     def _check_fleet_edges(self):
         """Respond appropriately if any aliens have reached an edge."""
         for alien in self.aliens.sprites():
             if alien.check_edges():
                 self._change_fleet_direction()
                 break
+
+    def _check_rect_edges(self):
+        """Respond appropriately if any aliens have reached an edge."""
+        if self.rectangle.check_edges():
+            print("jelly")
+            self._change_box_direction()
 
     def _ship_hit(self):
         """ Respond to the ship being hit by an alien. """
@@ -155,8 +167,14 @@ class AlienInvasion:
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet's direction."""
         for alien in self.aliens.sprites():
-            alien.rect.x -= self.settings.fleet_drop_speed
+            alien.rect.y -= self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+
+    def _change_box_direction(self):
+        """Drop the entire fleet and change the fleet's direction."""
+        self.rectangle.rect.y += self.settings.box_drop_speed
+        self.settings.fleet_direction *= -1
+        # print(self.rectangle.rect)
 
     def _create_fleet(self):
         """ Create the fleet of aliens. """

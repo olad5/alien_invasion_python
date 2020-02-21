@@ -28,3 +28,17 @@ class Rectangle:
         """ Draw the rectangle to the screen. """
         self.screen.fill(self.color, self.rect)
         # self.screen.blit(self.msg_image, self.msg_image_rect)
+
+    def check_edges(self):
+        """ Return True if rectangle is at the top or bottom of screen. """
+        screen_rect = self.screen.get_rect()
+
+        if self.rect.top <= 0 or self.rect.bottom >= screen_rect.bottom:
+            return True
+
+    def update(self):
+        """ Move the rectangle to the top or bottom. """
+        self.y -= self.settings.alien_speed * self.settings.fleet_direction
+        # self.y -= self.settings.alien_speed
+        self.rect.y = self.y
+        # print(self.y)
