@@ -38,7 +38,7 @@ class Rectangle:
 
     def update(self):
         """ Move the rectangle to the top or bottom. """
-        self.y -= self.settings.alien_speed * self.settings.fleet_direction
-        # self.y -= self.settings.alien_speed
+        # self.y -= self.settings.alien_speed * self.settings.fleet_direction
+        self.y -= self.settings.box_drop_speed * self.settings.fleet_direction
         self.rect.y = self.y
         # print(self.y)
