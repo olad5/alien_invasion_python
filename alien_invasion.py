@@ -33,6 +33,9 @@ class AlienInvasion:
 
         # Make the moving box.
         self.rectangle = Rectangle(self)
+        self.rect_list = pygame.sprite.Group()
+        self.rect_list.add(self.rectangle)
+        # self.rectangle.Group.draw()
 
         # Make the Play button.
         self.play_button = Button(self, "Play")
@@ -120,56 +123,46 @@ class AlienInvasion:
         # Get rid of bullets that have disappeared.
         for bullet in self.bullets.copy():
             if bullet.rect.right >= self.settings.screen_width:
-                self._check_bullet_box_collisions()
+                # self._check_bullet_box_collisions()
                 self.bullets.remove(bullet)
+            self._check_bullet_box_collisions()
         # self._check_bullet_alien_collisions()
         # self._check_bullet_box_collisions()
-
-    # def _check_bullet_alien_collisions(self):
-    #     """ Respond to bullet-alien collisions. """
-    #     # Remove any bullets and aliens that have collided.
-    #     collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
-
-    #     if not self.aliens:
-    #         # Destroy existing bullets and create new fleet.
-    #         self.bullets.empty()
-    #         self._create_fleet()
 
     def _check_bullet_box_collisions(self):
         """ Respond to bullet-box collisions. """
         # Remove any bullets and aliens that have collided.
         # collisions = pygame.sprite.spritecollideany(self.rectangle, self.bullets)
-        for bullet in self.bullets.copy():
-            hit = pygame.Rect.colliderect(self.rectangle.rect, bullet)
-            if hit:
-                print("hit it")
-            # if (not hit) and (bullet.rect.right >= self.settings.screen_width):
-            #     self._ship_hit()
-            #     print("You can't hit shit son")
+        # print(self.bullets)
+        hit = pygame.sprite.groupcollide(self.bullets, self.rect_list, True, False)
+        # print(hit)
+        for rec in self.rect_list:
+            # print(rec.rect.right)
+            for bullet in self.bullets.copy():
+                # print(not hit)
+                edge = bullet.rect.right >= (self.settings.screen_width - 1)
+                # print(edge)
+                if hit and (bullet.rect.right <= rec.rect.right) and (not edge):
+                    print("Try to miss")
+                    # sleep(0.5)
+                    break
 
-    # def _update_aliens(self):
-    #     """ Update the postions of all aliens in the fleet. """
-    #     self._check_fleet_edges()
-    #     self.aliens.update()
-
-    #     # Look for alien-ship collisions.
-    #     if pygame.sprite.spritecollideany(self.ship, self.aliens):
-    #         self._ship_hit()
-
-    #         # Look for aliens hitting the bottom of the screen.
-    #     self._check_aliens_left()
+                elif (not hit) and (
+                    bullet.rect.right >= (self.settings.screen_width - 1)
+                ):
+                    # print("leggo")
+                    self.settings.ship_limit -= 1
+                    # print(self.settings.ship_limit)
+                    self.bullets.empty()
+                    if self.settings.ship_limit < 0:
+                        self.stats.game_active = False
+                        pygame.mouse.set_visible(True)
+                        self.stats.reset_stats()
 
     def _update_box(self):
         """ Update the position of the box. """
         self._check_rect_edges()
         self.rectangle.update()
-
-    # def _check_fleet_edges(self):
-    #     """Respond appropriately if any aliens have reached an edge."""
-    #     for alien in self.aliens.sprites():
-    #         if alien.check_edges():
-    #             self._change_fleet_direction()
-    #             break
 
     def _check_rect_edges(self):
         """Respond appropriately if the box has reached an edge."""
@@ -199,54 +192,10 @@ class AlienInvasion:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
-    # def _check_aliens_left(self):
-    #     """Check if any aliens have reached the bottom of the screen."""
-    #     screen_rect = self.screen.get_rect()
-    #     for alien in self.aliens.sprites():
-    #         if alien.rect.left <= screen_rect.left:
-    #             # Treat this the same as if the ship got hit.
-    #             self._ship_hit()
-    #             break
-
-    # def _change_fleet_direction(self):
-    #     """Drop the entire fleet and change the fleet's direction."""
-    #     for alien in self.aliens.sprites():
-    #         alien.rect.y -= self.settings.fleet_drop_speed
-    #     self.settings.fleet_direction *= -1
-
     def _change_box_direction(self):
         """Drop the entire fleet and change the fleet's direction."""
-        self.rectangle.rect.x -= self.settings.box_drop_speed
+        # self.rectangle.rect.x -= self.settings.box_drop_speed
         self.settings.fleet_direction *= -1
-        # print(self.rectangle.rect)
-
-    # def _create_fleet(self):
-    #     """ Create the fleet of aliens. """
-    #     alien = Alien(self)
-    #     alien_width, alien_height = alien.rect.size
-    #     available_space_y = self.settings.screen_height - alien_height
-    #     number_aliens_y = available_space_y // (2 * alien_height)
-    #     # print(number_aliens_y)
-
-    #     # Determine the number of rows of aliens that fit on the screen.
-    #     ship_width = self.ship.rect.width
-    #     # available_space_x = self.settings.screen_width - (3 * alien_width) - ship_width
-    #     available_space_x = self.settings.screen_width - (3 * alien_width) - ship_width
-    #     number_rows = available_space_x // (2 * alien_width)
-    #     # print(number_rows)
-    #     for row_number in range(number_rows):
-    #         for alien_number in range(number_aliens_y):
-    #             self.__create_alien(alien_number, row_number)
-
-    # def __create_alien(self, alien_number, row_number):
-    #     """ Create aan alien and place it in the row. """
-    #     alien = Alien(self)
-    #     alien_width, alien_height = alien.rect.size
-    #     alien.y = alien_height + 2 * alien_height * alien_number
-    #     alien.rect.y = alien.y
-    #     self.aliens.add(alien)
-    #     # alien.rect.x = alien.rect.width + 2 * alien.rect.width * row_number
-    #     alien.rect.x = self.settings.screen_width - 2 * alien.rect.width * row_number
 
     def _update_screen(self):
         """ Update images on the screen, amd flip to new screen """
@@ -256,7 +205,10 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         # self.aliens.draw(self.screen)
+        # for rec in self.rect_list.sprites():
+        #     print(rec)
         self.rectangle.draw_rectangle()
+        # self.rectangle.Group.draw()
 
         # Draw the play button if the game is inactive.
         if not self.stats.game_active:

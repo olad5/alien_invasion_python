@@ -1,13 +1,15 @@
 import pygame
 from settings import Settings
+from pygame.sprite import Sprite
 
 # from pygame.sprite import sprite
 
 
-class Rectangle:
+class Rectangle(Sprite):
     """A class to create a rectangle to be at the right edge of the screen. """
 
     def __init__(self, ai_game):
+        super().__init__()
         """ Initialize rectangle attributes. """
         self.screen = ai_game.screen
         self.screen_rect = self.screen.get_rect()
@@ -15,8 +17,19 @@ class Rectangle:
         self.settings = ai_game.settings
 
         # Set the dimensions and properties of the rectangle.
+        # this is the original code
         self.width, self.height = 200, 100
-        self.rect = pygame.Rect(0, 0, self.width, self.height)
+        # print(self.width)
+        # self.rect = pygame.Rect(0, 0, self.width, self.height)
+
+        # self.image = pygame.image.load("images/alien.bmp")
+        # self.rect = pygame.Rect(0, 0, self.width, self.height)
+
+        self.image = pygame.Surface([self.width, self.height])
+        # self.image = pygame.Surface(self.width, self.height)
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = (0, 0)
 
         self.rect.y = self.rect.height
         # self.rect.x = self.settings.screen_width - (self.rect.width * 2)
