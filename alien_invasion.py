@@ -72,6 +72,8 @@ class AlienInvasion:
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         # print(self.stats.game_active)
         if button_clicked and not self.stats.game_active:
+            # Reset the game settings.
+            self.settings.initialize_dynamic_settings()
             # Reset the game statistics.
             self.stats.reset_stats()
             self.stats.game_active = True
@@ -126,8 +128,6 @@ class AlienInvasion:
                 # self._check_bullet_box_collisions()
                 self.bullets.remove(bullet)
             self._check_bullet_box_collisions()
-        # self._check_bullet_alien_collisions()
-        # self._check_bullet_box_collisions()
 
     def _check_bullet_box_collisions(self):
         """ Respond to bullet-box collisions. """
@@ -140,11 +140,13 @@ class AlienInvasion:
             # print(rec.rect.right)
             for bullet in self.bullets.copy():
                 # print(not hit)
-                edge = bullet.rect.right >= (self.settings.screen_width - 1)
-                # print(edge)
-                if hit and (bullet.rect.right <= rec.rect.right) and (not edge):
+                end = bullet.rect.right >= (self.settings.screen_width - 1)
+                # print(end)
+                if hit and (bullet.rect.right <= rec.rect.right) and (not end):
                     print("Try to miss")
                     # sleep(0.5)
+                    self.settings.increase_speed()
+                    print(self.settings.box_drop_speed)
                     break
 
                 elif (not hit) and (
