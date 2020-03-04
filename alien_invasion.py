@@ -35,10 +35,20 @@ class AlienInvasion:
         self.rectangle = Rectangle(self)
         self.rect_list = pygame.sprite.Group()
         self.rect_list.add(self.rectangle)
-        # self.rectangle.Group.draw()
 
         # Make the Play button.
         self.play_button = Button(self, "Play")
+
+        # Make the multiple buttons
+        self.easy_button = Button(self, "Easy")
+        self.medium_button = Button(self, "Medium")
+        self.hard_button = Button(self, "Hard")
+
+        self.button_list = pygame.sprite.Group()
+
+        self.button_list.add(self.easy_button)
+        self.button_list.add(self.medium_button)
+        self.button_list.add(self.hard_button)
 
     def run_game(self):
         """ Start the main loop for the game. """
@@ -63,38 +73,99 @@ class AlienInvasion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            # elif event.type == pygame.MOUSEBUTTONDOWN:
+            #     mouse_pos = pygame.mouse.get_pos()
+            #     self._check_play_button(mouse_pos)
+            # elif event.type == pygame.MOUSEBUTTONDOWN:
+            #     mouse_pos = pygame.mouse.get_pos()
+            #     self._check_easy_button(mouse_pos)
+            # elif event.type == pygame.MOUSEBUTTONDOWN:
+            #     print("leg")
+            #     mouse_pos = pygame.mouse.get_pos()
+            #     self._check_medium_button(mouse_pos)
+            # elif event.type == pygame.MOUSEBUTTONDOWN:
+            #     mouse_pos = pygame.mouse.get_pos()
+            #     self._check_hard_button(mouse_pos)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self._check_play_button(mouse_pos)
+                for value in range(1):
+                    self._check_easy_button(mouse_pos)
+                    self._check_medium_button(mouse_pos)
+                    self._check_hard_button(mouse_pos)
 
-    def _check_play_button(self, mouse_pos):
-        """ Start a new game when the player clicks Play. """
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        # print(self.stats.game_active)
-        if button_clicked and not self.stats.game_active:
-            # Reset the game settings.
+    # def _check_play_button(self, mouse_pos):
+    #     """ Start a new game when the player clicks Play. """
+    #     button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+    #     # print(self.stats.game_active)
+    #     if button_clicked and not self.stats.game_active:
+    #         # Reset the game settings.
+    #         self.settings.initialize_dynamic_settings()
+    #         # Reset the game statistics.
+    #         self.stats.reset_stats()
+    #         self.stats.game_active = True
+
+    #         # Get rid of any remaining aliens and bullets.
+    #         # self.aliens.empty()
+    #         self.bullets.empty()
+
+    #         # Create a new fleet and center the ship
+    #         # self._create_fleet()
+    #         self.ship.center_ship()
+
+    #         # Hide the mouse cursor.
+    #         pygame.mouse.set_visible(False)
+
+    def _general_settings(self):
+        """ General settings for all the difficulty levels. """
+        # Reset the game settings.
+        # self.settings.initialize_dynamic_settings()
+        # Reset the game statistics.
+        self.stats.reset_stats()
+        self.stats.game_active = True
+
+        # Get rid of any remaining aliens and bullets.
+        # self.aliens.empty()
+        self.bullets.empty()
+
+        # Create a new fleet and center the ship
+        # self._create_fleet()
+        self.ship.center_ship()
+
+        self.settings.fleet_direction = 1
+        # Hide the mouse cursor.
+        pygame.mouse.set_visible(False)
+
+    def _check_easy_button(self, mouse_pos):
+        """ Start new game in easy mode. """
+        easy_mode = self.easy_button.rect.collidepoint(mouse_pos)
+        if easy_mode and not self.stats.game_active:
             self.settings.initialize_dynamic_settings()
-            # Reset the game statistics.
-            self.stats.reset_stats()
-            self.stats.game_active = True
+            self._general_settings()
 
-            # Get rid of any remaining aliens and bullets.
-            # self.aliens.empty()
-            self.bullets.empty()
+    def _check_medium_button(self, mouse_pos):
+        """ Start new game in medium mode. """
+        medium_mode = self.medium_button.rect.collidepoint(mouse_pos)
+        if medium_mode and not self.stats.game_active:
+            self.settings.ship_speed = 1.5
+            self.settings.bullet_speed = 1.5
+            # Box settings
+            self.settings.box_drop_speed = 1.2
 
-            # Create a new fleet and center the ship
-            # self._create_fleet()
-            self.ship.center_ship()
+            self._general_settings()
 
-            # Hide the mouse cursor.
-            pygame.mouse.set_visible(False)
+    def _check_hard_button(self, mouse_pos):
+        """ Start new game in hard mode. """
+        hard_mode = self.hard_button.rect.collidepoint(mouse_pos)
+        if hard_mode and not self.stats.game_active:
+            self.settings.ship_speed = 1.5
+            self.settings.bullet_speed = 1.7
+            # Box settings
+            self.settings.box_drop_speed = 1.5
+
+            self._general_settings()
 
     def _check_keydown_events(self, event):
         """ Respond to keypresses. """
-        # if event.key == pygame.K_RIGHT:
-        #     self.ship.moving_right = True
-        # elif event.key == pygame.K_LEFT:
-        #     self.ship.moving_left = True
         if event.key == pygame.K_UP:
             self.ship.moving_up = True
         elif event.key == pygame.K_DOWN:
@@ -214,7 +285,12 @@ class AlienInvasion:
 
         # Draw the play button if the game is inactive.
         if not self.stats.game_active:
-            self.play_button.draw_button()
+            # print(self.button_list)
+            # self.play_button.draw_button()
+            # for value in range(len(self.button_list)):
+            self.easy_button.easy_button()
+            self.medium_button.medium_button()
+            self.hard_button.hard_button()
 
         # Make the most recently drawn screen visible
         pygame.display.flip()
