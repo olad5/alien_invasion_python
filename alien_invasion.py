@@ -1,8 +1,10 @@
 import sys
+import json
 from time import sleep
 
 import pygame
 
+filename = "high_score.json"
 
 from settings import Settings
 from game_stats import GameStats
@@ -56,6 +58,7 @@ class AlienInvasion:
         # Watch for keyboard and mouse events.
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self._save_high_score()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
@@ -96,6 +99,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -137,6 +141,7 @@ class AlienInvasion:
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.sb.prep_score()
             self.sb.check_high_score()
+            # print(self.stats.high_score)
 
         if not self.aliens:
             # Destroy existing bullets and create new fleet.
@@ -240,6 +245,12 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+
+    def _save_high_score(self):
+        """ This saves the all-time high score of the game. """
+        high_score = self.stats.high_score
+        with open(filename, "w") as file:
+            json.dump(high_score, file)
 
     def _update_screen(self):
         """ Update images on the screen, amd flip to new screen """

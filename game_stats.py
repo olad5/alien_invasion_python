@@ -1,3 +1,8 @@
+import json
+
+filename = "high_score.json"
+
+
 class GameStats:
     """ Track statistics for Alien Invasion. """
 
@@ -6,11 +11,13 @@ class GameStats:
         self.settings = ai_game.settings
         self.reset_stats()
 
+        # High score should never be reset.
+        with open(filename) as f:
+            number = json.load(f)
+
+        self.high_score = number
         # Start the Alien Invasion in an inactive state.
         self.game_active = False
-
-        # High score should never be reset.
-        self.high_score = 0
 
     def reset_stats(self):
         """ Initialize statistics that can change during the game. """
